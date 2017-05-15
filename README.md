@@ -10,6 +10,19 @@ Data dictionary, samples and other stuff are in references.
 Use the notebooks folder for Jupyter notebooks. Don't collaborate on notebooks on git (json with binary blobs are hard to git diff),
 instead use notebooks for exploratory analysis, visualization, creating outputs, etc. Save actual processing scripts under src.
 
+## The hardware / OS platform we used
+
+
+
+## Necessary 3rd-party software (+ installation steps)
+
+
+## How to train our model
+
+
+
+## How to make predictions on a new test set.
+
 
 # Project Structure
 ------------
