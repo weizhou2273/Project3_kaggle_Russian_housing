@@ -7,6 +7,7 @@ from sklearn import model_selection
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import GridSearchCV
 import os
+import numpy as np
 
 def data_in():
     #import data in model ready format
@@ -68,11 +69,31 @@ def main(pipeline_list=['xgb']):
     #preprocess()
 
     #XGB Parameter set call
+
+    #The default values are:
+    #max_depth=3,
+    #learning_rate=0.1,
+    #n_estimators=100,
+    #silent=True,
+    #objective='reg:linear',
+    #nthread=-1,
+    #gamma=0,
+    #min_child_weight=1,
+    #max_delta_step=0,
+    #subsample=1,
+    #colsample_bytree=1,
+    #colsample_bylevel=1,
+    #reg_alpha=0,
+    #reg_lambda=1,
+    #scale_pos_weight=1,
+    #base_score=0.5,
+    #seed=0,
+    #missing=None
     xgb_param = [
         {'subsample':1.0},
         {'colsample_bytree':0.7},
         {'objective':'reg:linear'},
-        {'silent': 0}
+        {'silent': True}
         ]
     xgb_estimator = ('xgb', xgb.XGBRegressor())
     for el in xgb_param:
@@ -98,13 +119,14 @@ def main(pipeline_list=['xgb']):
     logging.info('Accuracy of pipeline (training): {}'.format(grid_search.score(train_x, train_y)))
 
     logging.info('All results:')
-    [logging.info('Result {}'.format(x)) for x in grid_search.grid_scores_]
+    logging.info('Full CV_Results_\n\n {}\n'.format(grid_search.cv_results_))
     
     logging.info('Best Params: {}\n Best Score: {}'.format(
         grid_search.best_params_,
         grid_search.best_score_))
 
-    predictions = grid_search.predict(test_x)
+    log_predictions = grid_search.predict(test_x)
+    predictions = np.exp(log_predictions) - 1
 
     #Commit to git
     #try:
