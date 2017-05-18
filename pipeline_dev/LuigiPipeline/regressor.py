@@ -4,6 +4,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.cross_validation import train_test_split
 import xgboost as xgb
 from sklearn import metrics
+from helper_luigi import custom_out
 
 target_variable = ["price_doc", "id"]
 
@@ -38,7 +39,7 @@ def train_xg_boost(dataframe):
     X_train, X_test, y_train, y_test = train_test_split(dataframe.drop(target_variable, axis=1),
                                                         dataframe.price_doc)
                                                         
-    print X_train.shape
+    custom_out('Shape of split training dataset = {}'.format(X_train.shape))
     df_columns = X_train.columns
     dtrain = xgb.DMatrix(X_train, y_train, feature_names=df_columns)
     dtrain_all = xgb.DMatrix(dataframe.drop(target_variable,axis=1), dataframe.price_doc)
