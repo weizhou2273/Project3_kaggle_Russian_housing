@@ -2,6 +2,7 @@ import luigi
 import pandas as pd
 import os
 import pickle
+from urllib2 import Request,urlopen,URLError
 import time
 from regressor import *
 
@@ -12,10 +13,8 @@ class TrainDataPreProcessing(luigi.Task):
 
     def run(self):
         print '\nTrain Data Pre Proc\n'
-        old_path = os.path.join(os.getcwd())
-        os.chdir('../../data')
-        train_df = pd.read_csv(os.path.join(os.getcwd(), "processed", "train_clean.csv"))
-        os.chdir(old_path)
+        print os.path.join(os.getcwd(), "data", "train_clean.csv")
+        train_df = pd.read_csv(os.path.join(os.getcwd(), "data", "train_clean.csv"))
         #####################################################
         ## This space saved for future Train-PreProcessing ##
         #####################################################
@@ -28,10 +27,7 @@ class TestDataPreProcessing(luigi.Task):
 
     def run(self):
         print '\nTest Data Pre Proc\n'
-        old_path = os.path.join(os.getcwd())
-        os.chdir('../../data')
-        test_df = pd.read_csv(os.path.join(os.getcwd(), "processed", "test_clean.csv"))
-        os.chdir(old_path)
+        test_df = pd.read_csv(os.path.join(os.getcwd(), "data", "test_clean.csv"))
         ####################################################
         ## This space saved for future Test-PreProcessing ##
         ####################################################

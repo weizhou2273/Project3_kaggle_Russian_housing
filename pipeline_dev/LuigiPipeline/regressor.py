@@ -41,6 +41,7 @@ def train_xg_boost(dataframe):
     print X_train.shape
     df_columns = X_train.columns
     dtrain = xgb.DMatrix(X_train, y_train, feature_names=df_columns)
+    dtrain_all = xgb.DMatrix(dataframe.drop(target_variable,axis=1), dataframe.price_doc)
     dval = xgb.DMatrix(X_test, y_test, feature_names=df_columns)
 
     xgb_params = {
@@ -53,7 +54,7 @@ def train_xg_boost(dataframe):
         'silent': 1
     }
 
-    cv_output = xgb.cv(xgb_params, dtrain, num_boost_round=1000, early_stopping_rounds=20,
+    cv_output = xgb.cv(xgb_params, dtrain_all, num_boost_round=1000, early_stopping_rounds=20,
                        verbose_eval=50, show_stdv=False)
 
     nround = cv_output.loc[cv_output['test-rmse-mean'] == min(cv_output['test-rmse-mean'])].index.values[0]
