@@ -27,7 +27,9 @@ $ sh run.sh
 	+ It will also setup the luigi Central Scheduler and run it as a daemon process.
 	+ The Luigi Task Visualiser can be accessed by http://localhost:8082 which will give visualisation of all the running tasks.
 	+ Historical Tasks can also be viewed by http://localhost:8082/history
-* Run 
+* Run the run.sh
+	+ This starts the pipeline
+	+ Access visualization via http://localhost:8082
 
 ### Known Issues
 ------------------------
