@@ -1,0 +1,3 @@
+[submodule "ChaoShi_KaggleRussianHousing"]
+	path = ChaoShi_KaggleRussianHousing
+	url = https://github.com/chao-shi-git/ChaoShi_KaggleRussianHousing.git
