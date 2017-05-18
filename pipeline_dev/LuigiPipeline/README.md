@@ -23,10 +23,10 @@ $ sh run.sh
 ```
 
 * Run the build.sh
-    +It will create a virtual environment in the root directory of the project with all the dependencies maintained in requirements.txt
-    +It will also setup the luigi Central Scheduler and run it as a daemon process.
-    +The Luigi Task Visualiser can be accessed by http://localhost:8082 which will give visualisation of all the running tasks.
-    +Historical Tasks can also be viewed by http://localhost:8082/history
+	+ It will create a virtual environment in the root directory of the project with all the dependencies maintained in requirements.txt
+	+ It will also setup the luigi Central Scheduler and run it as a daemon process.
+	+ The Luigi Task Visualiser can be accessed by http://localhost:8082 which will give visualisation of all the running tasks.
+	+ Historical Tasks can also be viewed by http://localhost:8082/history
 * Run 
 
 ### Known Issues
