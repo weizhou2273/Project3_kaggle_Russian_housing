@@ -61,7 +61,7 @@ def train_xg_boost(dataframe):
     xgb_out = xgb.train(xgb_params, dtrain, num_boost_round=nround, evals=[(dval, 'val')],
                         early_stopping_rounds=20, verbose_eval=20)
 
-    cv_test_pred = xgb_out.predict(X_test)
+    cv_test_pred = xgb_out.predict(xgb.DMatrix(X_test))
     ### test your predictions
     mse = metrics.mean_squared_error(y_test, cv_test_pred)
     r2 = metrics.r2_score(y_test, cv_test_pred)
