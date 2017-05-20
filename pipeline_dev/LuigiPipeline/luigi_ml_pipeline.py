@@ -7,20 +7,6 @@ import time
 from regressor import *
 from helper_luigi import custom_out
 
-
-
-class ClearCache(luigi.Task):
-
-    def run(self):
-        custom_out('ClearCache Node initiated')
-        try:
-            os.remove("/tmp/train_clean_out.csv")
-            os.remove("/tmp/test_clean_out.csv")
-            os.remove("/tmp/russian_housing_model.pkl")
-        except:
-            pass
-        custom_out('ClearCache finished: Cache successfully cleared')
-
 class TrainDataPreProcessing(luigi.Task):
 
     def output(self):
@@ -68,8 +54,6 @@ class Train(luigi.Task):
 class Predict(luigi.Task):
 
     def requires(self):
-        #Comment out ClearCache to ... not clear the cached csv and pkl
-        yield ClearCache()
         yield Train()
         yield TestDataPreProcessing()
 
