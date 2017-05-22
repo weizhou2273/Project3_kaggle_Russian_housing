@@ -54,11 +54,16 @@ def train_xg_boost(dataframe):
         'eval_metric': 'rmse',
         'silent': 1
     }
-
+    for param in xgb_params:
+        custom_out('XGB Parameter {} = {}'.format(param, xgb_params[param]))
+                                                                    
+    
     cv_output = xgb.cv(xgb_params, dtrain_all, num_boost_round=1000, early_stopping_rounds=20,
                        verbose_eval=50, show_stdv=False)
 
     nround = cv_output.loc[cv_output['test-rmse-mean'] == min(cv_output['test-rmse-mean'])].index.values[0]
+
+    custom_out('CV XGBoost output nround = {}'.format(nround))
     
     xgb_out = xgb.train(xgb_params, dtrain, num_boost_round=nround, evals=[(dval, 'val')],
                         early_stopping_rounds=20, verbose_eval=20)
@@ -68,7 +73,7 @@ def train_xg_boost(dataframe):
     mse = metrics.mean_squared_error(y_test, cv_test_pred)
     r2 = metrics.r2_score(y_test, cv_test_pred)
     ### and print the report
-    print('Final RMSE = {}\nFinal R2 = {}'.format(mse**0.5, r2))
+    custom_out('XGBoost Final RMSE = {}\nXGBoost Final R2 = {}'.format(mse**0.5, r2))
 
     return xgb_out
 
