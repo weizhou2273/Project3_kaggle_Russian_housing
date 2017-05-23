@@ -1,5 +1,8 @@
 import time
 import statsmodels.formula.api as smf
+import pandas as pd
+import os
+import pickle
 
 def custom_out(my_str):
     print '\n{}: {}\n'.format(time.strftime("%Y%m%d-%H%M%S"), my_str)
@@ -32,7 +35,7 @@ def model_in(model_str):
     return str(model_str).lower()
 
 def stacked_model_compute(pred1, pred2):
-    #should feed these into a linear regression model...
+    #can add more complicated algo later if needed
     return (pred1+pred2)/2
 
 def auto_grid(grid_search, X_train, y_train, model_str):

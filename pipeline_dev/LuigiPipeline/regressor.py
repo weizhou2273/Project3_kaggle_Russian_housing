@@ -6,12 +6,13 @@ import xgboost as xgb
 from sklearn import metrics
 from external_helper_luigi import custom_out, forward_selected, auto_grid
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import Imputer
+from sklearn.preprocessing import Imputer, StandardScaler
 from sklearn.model_selection import cross_val_score
 import pandas as pd
 import numpy as np
 
-target_variable = ["price_doc", "id"]
+#target_variable = ["price_doc", "id"]
+target_variable = ["price_doc"]
 
 def train_xg_boost(dataframe, xgb_param_dict = 'predefined'):
     np.random.seed(0)
@@ -76,6 +77,7 @@ def train_random_forest(dataframe):
     custom_out("Training Random Forest")
     pipeline = Pipeline([("imputer", Imputer(strategy="median",
                                               axis=0)),
+                          ("scaler", StandardScaler()),
                           ("forest", RandomForestRegressor(random_state=0,
                                                            n_estimators=100))])
     grid_search = GridSearchCV(estimator=pipeline,
@@ -103,6 +105,7 @@ def train_model_ridge(dataframe):
     custom_out("Training Ridge Regression")
     pipeline = Pipeline([("imputer", Imputer(strategy="median",
                                               axis=0)),
+                          ("scaler", StandardScaler()),
                           ("ridge", linear_model.Ridge())])
     grid_search = GridSearchCV(estimator=pipeline,
                                param_grid=parameter_grid,
@@ -145,6 +148,7 @@ def train_model_xgb_grid(dataframe):
     return train_xg_boost(dataframe, xgb_param_dict)
 
 def train_model_xgb_rand(dataframe):
+    #Not yet implemented
     X_train = dataframe.drop(target_variable, axis=1)
     y_train = dataframe[target_variable[0]]
 
@@ -166,24 +170,6 @@ def train_model_xgb_rand(dataframe):
     print random_search.best_score_
     return random_search.best_estimator_
 
-def xgb_to_linreg(dataframe):
-    #Convert price_doc to price/sq
-
-    #Split dataframe
-
-    #Train XGB
-
-    #Append predicted price/sq to dataframe
-
-    #Convert price_doc (original) to log(price+1)
-
-    #Split dataframe
-
-    #Train linear model
-
-    #Return fit
-    return stacked_model
-
 def train_elastic_model(dataframe):
     pass
 #    custom_out("Training ElasticNetCV Regression")
@@ -200,16 +186,24 @@ def train_elastic_model(dataframe):
 
 def train_Huber(dataframe):
     custom_out("Training Huber Regression")
-    X_train, X_test, y_train, y_test = train_test_split(dataframe.drop(target_variable, axis=1),
-                                                        dataframe[target_variable[0]])
+    np.random.seed(0)
+    X_train = dataframe.drop(target_variable, axis=1)
+    y_train = dataframe[target_variable[0]]
 
     pipeline = Pipeline([("imputer", Imputer(strategy="median",
                                               axis=0)),
+                          ("scaler", StandardScaler()),
                           ("huber", linear_model.HuberRegressor())])
 
-    pipeline.fit(X_train, y_train)
-    custom_out('MSE (Huber):'.format(metrics.mean_squared_error(pipeline.predict(X_test), y_test)))
-    return pipeline
+    parameter_grid = {'huber__epsilon': [1.2, 1.35, 1.5]}
+
+    grid_search = GridSearchCV(estimator=pipeline,
+                               param_grid=parameter_grid,
+                               cv=5,
+                               verbose=2,
+                               n_jobs=5,
+                               refit=True)
+    return auto_grid(grid_search, X_train, y_train, 'HLR')
 
 if __name__ == '__main__':
     pass
