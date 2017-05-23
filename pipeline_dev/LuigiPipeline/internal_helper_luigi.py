@@ -17,14 +17,20 @@ def function_mappings():
 						'hlr':train_Huber}
 
 def prediction_to_submission(dataframe, predictions, model_string):
-    #Post processing from price/sq to price
-    if (str(model_string) == 'flr') | (str(model_string) == 'rlr'):
-    	predictions = predictions
-    	custom_out('Transforming back from log(price)')
-
-
+    #Post processing from log(price+1) to price
+    #Replace with regex search for 'lr' in model_string
+    debug = True
+    if debug:
+    	pass
+    else:
+    	if (str(model_string) == 'flr') | (str(model_string) == 'rlr'):
+    		predictions = np.exp(predictions) - 1
+    		custom_out('Transformed back from log(price)')
+    	#Post processing for price/sqft to price
+    	else:
+    		predictions = dataframe['totalsq']*predictions
     return pd.DataFrame({ 'id': dataframe['id'],
-                          'price_doc': predictions})
+    					  'price_doc': predictions})
 
 def model_choice(model_string, dataframe):
 	return function_mappings()[model_string](dataframe)

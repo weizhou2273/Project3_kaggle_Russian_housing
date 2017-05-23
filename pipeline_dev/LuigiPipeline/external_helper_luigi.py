@@ -35,5 +35,14 @@ def stacked_model_compute(pred1, pred2):
     #should feed these into a linear regression model...
     return (pred1+pred2)/2
 
+def auto_grid(grid_search, X_train, y_train, model_str):
+    grid_search.fit(X_train, y_train)
+    custom_out('Best score {}: {}'.format(model_str, grid_search.best_score_))
+    custom_out('Best parameters {}: {}'.format(model_str, grid_search.best_params_))
+    print '\n All grid results: \n'
+    print grid_search.grid_scores_
+    print grid_search.best_estimator_
+    return grid_search.best_estimator_
+
 if __name__ == '__main__':
     pass
