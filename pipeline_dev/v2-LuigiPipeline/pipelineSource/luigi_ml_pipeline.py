@@ -82,7 +82,7 @@ class Predict(luigi.Task):
         else:
             prices_model = pd.read_pickle(Train().output().path)
             test_df = pd.read_csv(TestDataPreProcessing().output().path)
-            test_x = test_postprocess(model_str, test_df)
+            test_x = preprocess_data(test_df, model_str, 'test')
             predictions = prices_model.predict(test_x)
 
             model_str2 = model_in(sys.argv[5])
@@ -90,7 +90,7 @@ class Predict(luigi.Task):
                 custom_out('No (or invalid) 2nd model choice')
             else:
                 second_model = pd.read_pickle(WeightedModel().output().path)
-                test_x2 = test_postprocess(model_str2, test_df)
+                test_x2 = preprocess_data(test_df, model_str2, 'test')
                 predictions2 = second_model.predict(test_x2)
                 predictions = stacked_model_compute(predictions, predictions2)
 

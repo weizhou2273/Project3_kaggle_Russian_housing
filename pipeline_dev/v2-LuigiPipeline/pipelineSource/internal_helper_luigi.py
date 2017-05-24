@@ -26,15 +26,20 @@ def column_mappings():
 			'hlr':'lr'}
 
 def preprocess_data(dataframe, model_str, test_train):
-	data_str = column_mappings()[model_str]
-	if data_str == 'lr':
-		df = col_select(dataframe, model_str, test_train)
-		df['price_doc'] = np.log(df['price_doc']+1)
-	else:
-		df = col_select(dataframe, model_str, test_train, 'totalsq')
-		df['price_doc'] = df['price_doc']/df['totalsq']
-		df.drop('totalsq', axis=1)
-	return df
+    print dataframe, model_str, test_train
+    data_str = column_mappings()[model_str]
+    if test_train == 'train':
+        if data_str == 'lr':
+            df = col_select(dataframe, model_str, test_train)
+            df['price_doc'] = np.log(df['price_doc']+1)
+        else:
+            df = col_select(dataframe, model_str, test_train, 'totalsq')
+            df['price_doc'] = df['price_doc']/df['totalsq']
+            df = df.drop('totalsq', axis=1)
+    else:
+        df = col_select(dataframe, model_str, test_train)
+    print df
+    return df
 
 def prediction_to_submission(dataframe, predictions, model_string):
     #Post processing from log(price+1) to price
@@ -57,20 +62,19 @@ def model_choice(model_string, dataframe):
 	return function_mappings()[model_string](dataframe)
 
 def test_postprocess(model_string, dataframe):
-	data_str = column_mappings()[model_string]
-	if model_string == 'rf':
-		return col_select(dataframe, model_string, 'test', 'totalsq')
-	elif data_str == 'xgb':
-		return xgb.DMatrix(col_select(dataframe, model_string, 'test', 'totalsq'))
-	else:
-		return col_select(dataframe.drop('id', axis=1), model_string, 'test')
+    data_str = column_mappings()[model_string]
+    if model_string == 'rf':
+        return dataframe
+    elif data_str == 'xgb':
+        return xgb.DMatrix(dataframe)
+    else:
+        return dataframe
 
 def col_select(dataframe, model_str, test_train, addl_col=None):
     #with open(os.path.join(os.getcwd(), "data", data_str, "_col.pkl"), "rb") as fp:
     data_str = column_mappings()[model_str]
     with open(os.path.join(os.getcwd(), "data", "{}_col_debug.pkl".format(data_str)), "rb") as fp:
         col_names = pickle.load(fp)
-
     if test_train == 'train':
     	if addl_col == None:
         	frames = [dataframe['price_doc'], dataframe[col_names]]
@@ -78,10 +82,7 @@ def col_select(dataframe, model_str, test_train, addl_col=None):
         	frames = [dataframe['price_doc'], dataframe[col_names], dataframe[addl_col]]
         return pd.concat(frames, axis=1)
     else:
-        if addl_col == None:
-        	return dataframe[col_names]
-        else:
-        	return pd.concat([dataframe[col_names], dataframe[addl_col]], axis=1)
+        return test_postprocess(model_str, dataframe[col_names])
 
 def xgb_lr():
 	pass

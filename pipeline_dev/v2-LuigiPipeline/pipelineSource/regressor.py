@@ -34,7 +34,6 @@ def train_xg_boost(dataframe, xgb_param_dict = 'predefined'):
     else:
         xgb_params = xgb_param_dict
         xgb_params['eval_metric']='rmse'
-        xgb_params['eta'] = 0.05
 
     for param in xgb_params:
         custom_out('XGB Parameter {} = {}'.format(param, xgb_params[param]))
