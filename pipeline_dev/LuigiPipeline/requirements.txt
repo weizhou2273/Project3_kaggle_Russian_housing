@@ -1,8 +1,0 @@
-numpy
-scipy
-pandas
-xgboost
-luigi==2.0.1
-scikit-learn
-os
-time
