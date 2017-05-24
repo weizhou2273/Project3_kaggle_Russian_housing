@@ -10,7 +10,8 @@ from sklearn.preprocessing import Imputer, StandardScaler
 from sklearn.model_selection import cross_val_score
 import pandas as pd
 import numpy as np
-sys.path.insert(0, '../userInput/')
+import sys, os
+sys.path.insert(0, os.path.join(os.getcwd(),'userInput/'))
 from user_input import *
 
 
@@ -29,7 +30,7 @@ def train_xg_boost(dataframe, xgb_param_dict = 'predefined'):
     dval = xgb.DMatrix(X_test, y_test, feature_names=df_columns)
 
     if xgb_param_dict =='predefined':
-        user_xgb_param()
+        xgb_params = user_xgb_param()
     else:
         xgb_params = xgb_param_dict
         xgb_params['eval_metric']='rmse'
