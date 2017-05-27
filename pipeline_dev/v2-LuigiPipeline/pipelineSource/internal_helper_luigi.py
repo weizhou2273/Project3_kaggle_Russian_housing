@@ -14,7 +14,7 @@ def function_mappings():
 						'flr':train_forward_selected,
 						'rlr':train_model_ridge,
 						'xgbgrid':train_model_xgb_grid,
-						#'en':train_elastic_model,
+						'en':train_elastic_model,
 						'hlr':train_Huber}
 
 def column_mappings():
@@ -23,22 +23,24 @@ def column_mappings():
 			'flr':'lr',
 			'rlr':'lr',
 			'xgbgrid':'xgb',
-			'hlr':'lr'}
+			'hlr':'lr',
+            'en':'lr'}
 
 def preprocess_data(dataframe, model_str, test_train):
-    print dataframe, model_str, test_train
     data_str = column_mappings()[model_str]
     if test_train == 'train':
         if data_str == 'lr':
             df = col_select(dataframe, model_str, test_train)
             df['price_doc'] = np.log(df['price_doc']+1)
         else:
-            df = col_select(dataframe, model_str, test_train, 'totalsq')
-            df['price_doc'] = df['price_doc']/df['totalsq']
-            df = df.drop('totalsq', axis=1)
+            df = col_select(dataframe, model_str, test_train)
+            #If we're dropping full_sq, need to have addl column selected from dataframe
+            #df = col_select(dataframe, model_str, test_train, 'full_sq')
+            df['price_doc'] = df['price_doc']/df['full_sq']
+            #Keeping full_sq in feature list
+            #df = df.drop('full_sq', axis=1)
     else:
         df = col_select(dataframe, model_str, test_train)
-    print df
     return df
 
 def prediction_to_submission(dataframe, predictions, model_string):
@@ -54,7 +56,7 @@ def prediction_to_submission(dataframe, predictions, model_string):
     		custom_out('Transformed back from log(price)')
     	#Post processing for price/sqft to price
     	else:
-    		predictions = dataframe['totalsq']*predictions
+    		predictions = dataframe['full_sq']*predictions
     return pd.DataFrame({ 'id': dataframe['id'],
     					  'price_doc': predictions})
 
@@ -71,9 +73,8 @@ def test_postprocess(model_string, dataframe):
         return dataframe
 
 def col_select(dataframe, model_str, test_train, addl_col=None):
-    #with open(os.path.join(os.getcwd(), "data", data_str, "_col.pkl"), "rb") as fp:
     data_str = column_mappings()[model_str]
-    with open(os.path.join(os.getcwd(), "data", "{}_col_debug.pkl".format(data_str)), "rb") as fp:
+    with open(os.path.join(os.getcwd(), "data", "{}_col.pkl".format(data_str)), "rb") as fp:
         col_names = pickle.load(fp)
     if test_train == 'train':
     	if addl_col == None:

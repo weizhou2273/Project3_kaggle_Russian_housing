@@ -15,8 +15,8 @@ class TrainDataPreProcessing(luigi.Task):
 
     def run(self):
         custom_out('TrainDataPreProcessing Node initiated')
-        #train_df = pd.read_csv(os.path.join(os.getcwd(), "data", "train_clean.csv"))
-        train_df = pd.read_csv(os.path.join(os.getcwd(), "data", "train_debug.csv"))
+        train_df = pd.read_csv(os.path.join(os.getcwd(), "data", "train_clean.csv"))
+        #train_df = pd.read_csv(os.path.join(os.getcwd(), "data", "train_debug.csv"))
         #####################################################
         ## This space saved for future Train-PreProcessing ##
         #####################################################
@@ -27,8 +27,8 @@ class TestDataPreProcessing(luigi.Task):
 
     def run(self):
         custom_out('TestDataPreProcessing Node initiated')
-        #test_df = pd.read_csv(os.path.join(os.getcwd(), "data", "test_clean.csv"))
-        test_df = pd.read_csv(os.path.join(os.getcwd(), "data", "test_debug.csv"))
+        test_df = pd.read_csv(os.path.join(os.getcwd(), "data", "test_clean.csv"))
+        #test_df = pd.read_csv(os.path.join(os.getcwd(), "data", "test_debug.csv"))
         ####################################################
         ## This space saved for future Test-PreProcessing ##
         ####################################################
@@ -64,7 +64,7 @@ class Predict(luigi.Task):
     def requires(self):
         yield Train()
         yield TestDataPreProcessing()
-        yield WeightedModel()
+        yield SecondaryTrain()
 
     def output(self):
         timestr = time.strftime("%Y%m%d-%H%M%S")
@@ -100,7 +100,7 @@ class Predict(luigi.Task):
         custom_out('Write of submission to csv successful')
 
 
-class WeightedModel(luigi.Task):
+class SecondaryTrain(luigi.Task):
     def requires(self):
         return TrainDataPreProcessing()
 
